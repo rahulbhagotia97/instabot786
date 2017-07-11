@@ -74,10 +74,10 @@ def get_own_post():
 
     if own_media['meta']['code'] == 200:
         if len(own_media['data']):
-            video_name = own_media['data'][0]['id'] + '.mp4'
-            video_url = own_media['data'][0]['videos']['standard_resolution']['url']
-            urllib.urlretrieve(video_url, video_name)
-            print 'video has been downloaded'
+            image_name = own_media['data'][0]['id'] + '.jpeg'
+            image_url = own_media['data'][0]['images']['standard_resolution']['url']
+            urllib.urlretrieve(image_url, image_name)
+            print 'image has been downloaded'
         else:
             print 'Post does not exist!'
     else:
@@ -199,27 +199,32 @@ def get_comment_list(media_id):
 
 # function declaration for trending post
 
-def get_trending post(media_id):
+def get_trending_post(media_id):
     list_of_comments = get_comment_list(media_id)
     list_of_likes = get_like_list(media_id)
     if list_of_likes== None:
         print 'no trending post found'
         exit()
     request_url = (BASE_URL + 'users/%s/media/recent/?access_token=%s') % (list_of_likes,APP_ACCESS_TOKEN)
-    print 'GET request url : &s' % (request_url)
+    print 'GET request url : %s' % (request_url)
     like_list = requests.get(request_url).json()
     request_url = (BASE_URL + 'users/%s/media/recent/?access_token=%s') % (list_of_comments, APP_ACCESS_TOKEN)
-    print 'GET request url : &s' % (request_url)
+    print 'GET request url : %s' % (request_url)
     comment_list = requests.get(request_url).json()
 
     if comment_list['meta']['code'] == 200:
-    if like_list['meta']['code'] == 200:
-    if len((like_list['data'])>(comment_list['data'])):
-        print 'this post is trending : %s'% (user_info['data'][0]['id'])
-    else:
-        print'status code other than 200 received'
-
-
+        if like_list['meta']['code'] == 200:
+            if len(like_list['data'])>len(comment_list['data']):
+                image_name = user_media ['data'][0]['id'] + '.jpeg'
+                image_url = user_media ['data'][0]['images']['standard_resolution']['url']
+                urllib.urlretrieve(image_url, image_name)
+                print 'this post is trending : %s'
+                request_url = (BASE_URL + 'users/%s/media/recent/?access_token=%s') % (tags, APP_ACCESS_TOKEN)
+                print 'GET request url : %s' % (request_url)
+                tags = requests.get(request_url).json()
+                print '['data'][0]['tags']'
+            else:
+                print'status code other than 200 received'
 # menu options of bot
 
 def start_bot():
@@ -235,7 +240,8 @@ def start_bot():
      print "f.Like the recent post of a user\n"
      print "g.Get a list of comments on the recent post of a user\n"
      print "h.Make a comment on the recent post of a user\n"
-     print "j.Exit"
+     print "i.get trending post\n"
+     print "j.exit"
 
      choice = raw_input("Enter you choice: ")
      if choice == "a":
@@ -260,6 +266,9 @@ def start_bot():
      elif choice == "h":
          insta_username = raw_input("Enter the username of the user: ")
          post_a_comment(insta_username)
+     elif choice == "i":
+         insta_username = raw_input("Enter the username of the user: ")
+         get_trending_post(insta_username)
      elif choice == "j":
         exit()
     else:
